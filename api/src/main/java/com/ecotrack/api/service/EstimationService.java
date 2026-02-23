@@ -1,7 +1,9 @@
 package com.ecotrack.api.service;
 
 import com.ecotrack.api.dto.EstimationRequest;
+import com.ecotrack.api.model.EmissionFactor;
 import com.ecotrack.api.model.Estimation;
+import com.ecotrack.api.repository.EmissionFactorRepository;
 import com.ecotrack.api.repository.EstimationRepository;
 import org.springframework.stereotype.Service;
 
@@ -13,15 +15,20 @@ import java.util.List;
 public class EstimationService {
 
     private final EstimationRepository estimationRepository;
+    private final EmissionFactorRepository factorRepository;
 
-    public EstimationService(EstimationRepository estimationRepository) {
+    public EstimationService(EstimationRepository estimationRepository, EmissionFactorRepository factorRepository) {
         this.estimationRepository = estimationRepository;
+        this.factorRepository = factorRepository;
     }
 
     public Estimation calculateAndSave(EstimationRequest request){
-        // Realizo el cálculo
-        double factor = 0.5;
-        Double result = request.getDistance() * factor;
+
+        EmissionFactor factorEntity = factorRepository
+                .findByVehicleTypeAndFuelType(request.getVehicleType(), request.getFuelType())
+                .orElseThrow(() -> new RuntimeException("Combinación de vehículo y combustible no soportada"));
+
+        Double result = request.getDistance() * factorEntity.getFactor();
 
         // Crear la entidad para guardarla.
         Estimation estimation = new Estimation();
