@@ -2,6 +2,7 @@ package com.ecotrack.api.controller;
 import com.ecotrack.api.dto.EstimationRequest;
 import com.ecotrack.api.model.Estimation;
 import com.ecotrack.api.service.EstimationService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,7 +19,7 @@ public class EstimationController {
     }
 
     @PostMapping // Método post
-    public Estimation calculate(@RequestBody EstimationRequest request){
+    public Estimation calculate(@Valid  @RequestBody EstimationRequest request){
         return estimationService.calculateAndSave(request);
     }
 
