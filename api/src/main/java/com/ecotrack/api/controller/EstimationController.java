@@ -4,6 +4,8 @@ import com.ecotrack.api.model.Estimation;
 import com.ecotrack.api.service.EstimationService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController // Indica que va a recibir llamadas de internet.
 @RequestMapping("api/v1/calculate") // direc api.
 public class EstimationController {
@@ -18,5 +20,11 @@ public class EstimationController {
     @PostMapping // Método post
     public Estimation calculate(@RequestBody EstimationRequest request){
         return estimationService.calculateAndSave(request);
+    }
+
+    // Método para poder ver el historial
+    @GetMapping
+    public List<Estimation> getAllEstimation (){
+        return estimationService.getAll();
     }
 }
