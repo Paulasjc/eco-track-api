@@ -1,9 +1,8 @@
 package com.ecotrack.api.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.ecotrack.api.model.enums.FuelType;
+import com.ecotrack.api.model.enums.VehicleType;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
@@ -13,8 +12,10 @@ public class EmissionFactor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String vehicleType;
-    private String fuelType;
+    @Enumerated(EnumType.STRING) // Importante: guarda el texto (CAR_SMALL) y no el número (0)
+    private VehicleType vehicleType;
+    @Enumerated(EnumType.STRING)
+    private FuelType fuelType;
     private Double factor; // kg de CO2 por km
 
 }

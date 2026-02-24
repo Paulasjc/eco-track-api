@@ -1,4 +1,6 @@
 package com.ecotrack.api.dto;
+import com.ecotrack.api.model.enums.FuelType;
+import com.ecotrack.api.model.enums.VehicleType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -10,11 +12,11 @@ public class EstimationRequest {
     @Positive(message = "La distancia debe ser mayor que cero")
     private Double distance;
 
-    @NotBlank(message = "El tipo de vehículo es obligatorio")
-    private String vehicleType;
+    @NotNull(message = "El tipo de vehículo es obligatorio")
+    private VehicleType vehicleType;
 
-    @NotBlank(message = "El tipo de combustible es obligatorio")
-    private String fuelType;
+    @NotNull(message = "El tipo de combustible es obligatorio")
+    private FuelType fuelType;
 
     @Positive(message = "El peso debe ser un valor positivo")
     private Double weight;

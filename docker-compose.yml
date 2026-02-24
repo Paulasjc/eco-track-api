@@ -1,0 +1,17 @@
+services:
+  # Definimos el servicio de la base de datos
+  db:
+    image: postgres:15
+    container_name: ecotrack-db
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ecotrack_db
+    ports:
+      - "5432:5432" # Mapea el puerto del contenedor al de tu PC
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Para que los datos no se borren al apagar el contenedor
+
+volumes:
+  postgres_data:
