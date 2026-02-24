@@ -1,176 +1,187 @@
-'use client'
+'use client';
 
-import { EstimationRequest, EstimationResponse } from "@/types/estimation"
-import { useState } from "react"
+import { EstimationRequest, EstimationResponse } from '@/types/estimation';
+import { VEHICLE_LABELS, FUEL_LABELS } from '@/lib/constants';
+import { useState } from 'react';
+
+const VEHICLE_OPTIONS = Object.entries(VEHICLE_LABELS).map(([value, label]) => ({ value, label }));
+const FUEL_OPTIONS = Object.entries(FUEL_LABELS).map(([value, label]) => ({ value, label }));
 
 interface CalculationFormProps {
-    onCalculateSucces: () => void; // Decimos que es una función que no devuelve nada
+  onCalculateSuccess: (result: EstimationResponse) => void;
 }
 
-const VEHICLE_OPTIONS = [
-    { value: 'CAR_SMALL', label: 'Coche Pequeño' },
-    { value: 'CAR_MEDIUM', label: 'Coche Mediano' },
-    { value: 'CAR_LARGE', label: 'Coche Grande' },
-    { value: 'CAR_ELECTRIC', label: 'Coche Eléctrico' },
-    { value: 'TRUCK_LIGHT', label: 'Camión Ligero' },
-    { value: 'TRUCK_HEAVY', label: 'Camión Pesado' },
-    { value: 'VAN', label: 'Furgoneta' },
-    { value: 'MOTORBIKE', label: 'Motocicleta' },
-    { value: 'BUS', label: 'Autobús' },
-    { value: 'PLANE_SHORT_HAUL', label: 'Avión (Vuelo Corto)' },
-    { value: 'PLANE_LONG_HAUL', label: 'Avión (Vuelo Largo)' },
-];
+const inputClass =
+  'h-12 w-full rounded-lg border border-slate-300 bg-white px-4 text-base text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition';
 
-const FUEL_OPTIONS = [
-    { value: 'GASOLINE', label: 'Gasolina' },
-    { value: 'DIESEL', label: 'Diésel' },
-    { value: 'ELECTRIC', label: 'Electricidad' },
-    { value: 'JET_FUEL', label: 'Queroseno' },
-];
+export default function CalculationForm({ onCalculateSuccess }: CalculationFormProps) {
+  const [formData, setFormData] = useState<{
+    distance: number | '';
+    vehicleType: string;
+    fuelType: string;
+    weight: number | '';
+  }>({
+    distance: '',
+    vehicleType: '',
+    fuelType: '',
+    weight: '',
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-export default function CalculationForm(props: CalculationFormProps) {
-
-    // Defino el estado para los campos del formulario
-
-    const [formData, setFormData] = useState<EstimationRequest>({
-        distance: '' as any,
-        vehicleType: '',
-        fuelType: '',
-        weight: '' as any,
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]:
+        value === ''
+          ? ''
+          : name === 'distance' || name === 'weight'
+            ? Number(value)
+            : value,
     });
+  };
 
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [result, setResult] = useState<EstimationResponse | null>(null);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.vehicleType || !formData.fuelType || !formData.distance) {
+      setError('Por favor, rellena todos los campos obligatorios.');
+      return;
+    }
+    setIsLoading(true);
+    setError(null);
+    try {
+      const payload: EstimationRequest = {
+        distance: Number(formData.distance),
+        vehicleType: formData.vehicleType as EstimationRequest['vehicleType'],
+        fuelType: formData.fuelType as EstimationRequest['fuelType'],
+        weight: formData.weight === '' ? 0 : Number(formData.weight),
+      };
+      const response = await fetch('http://localhost:8080/api/v1/calculate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) throw new Error('Fallo en el cálculo');
+      const data = await response.json();
+      onCalculateSuccess(data);
+    } catch {
+      setError('No se pudo conectar con el servidor');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-
-
-        const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            // Si el valor está vacío, lo dejamos vacío para que el usuario pueda borrar.
-            // Si tiene algo y es un campo numérico, lo convertimos a número.
-            [name]: value === ""
-                ? ""
-                : (name === "distance" || name === "weight" ? Number(value) : value)
-        });
-
-
-    };
-
-    // Definir el estado apra la respuesta que vendrá e la API
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        // Validación simple antes de enviar
-        if (!formData.vehicleType || !formData.fuelType || !formData.distance) {
-            setError("Por favor, rellena todos los campos obligatorios.");
-            return;
-        }
-        setIsLoading(true); // 1. Empezamos a cargar
-        setError(null);
-
-        try {
-            const response = await fetch('http://localhost:8080/api/v1/calculate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
-            });
-
-
-            if (!response.ok) {
-                throw new Error("Fallo en el cálculo");
-            }
-
-
-
-
-            const data = await response.json();
-            setResult(data); // 2. Guardamos el éxito
-            props.onCalculateSucces();
-        } catch (error) {
-            setError("No se pudo conectar con el servidor");
-        } finally {
-            setIsLoading(false); // 3. Pase lo que pase, dejamos de cargar
-        }
-    };
-    return (
-        <div className="max-w-md mx-auto p-6 bg-white rounded-xl shadow-md">
-            <h2 className="text-2xl font-bold mb-4">Calculadora de CO2</h2>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-                {/* INPUT PARA DISTANCIA */}
-                <div>
-                    <label className="block text-sm font-medium">Distancia (km)</label>
-                    <input
-                        type="number"
-                        name="distance" // IMPORTANTE: que coincida con la clave del objeto
-                        value={formData.distance}
-                        onChange={handleChange} // Aquí es donde usas la función que te sugerí antes
-                        className="w-full border p-2 rounded"
-                    />
-                </div>
-
-                {/* SELECT PARA VEHÍCULO */}
-                {/* Intenta añadir tú el <select> para vehicleType y fuelType */}
-                <div>
-                    <select
-                        name="vehicleType" // Clave en el objeto
-                        value={formData.vehicleType}
-                        onChange={handleChange}
-                        className="w-full border p-2 rounded"
-                    >
-                        <option value="">Selecciona vehículo</option>
-                        {VEHICLE_OPTIONS.map(opt => (
-                            <option key={opt.value} value={opt.value}>{opt.label}</option>
-                        ))}
-                    </select>
-                </div>
-                <div>
-                    <select
-                        name="fuelType"
-                        value={formData.fuelType}
-                        onChange={handleChange}
-                        className="w-full border p-2 rounded"
-                    >
-                        <option value="">Selecciona combustible</option>
-                        {FUEL_OPTIONS.map(opt => (
-                            <option key={opt.value} value={opt.value}>{opt.label}</option>
-                        ))}
-                    </select>
-                </div>
-
-                <div>
-                    <label className="block text-sm font-medium">Peso</label>
-                    <input
-                        type="number"
-                        name="weight" // IMPORTANTE: que coincida con la clave del objeto
-                        value={formData.weight}
-                        onChange={handleChange} // Aquí es donde usas la función que te sugerí antes
-                        className="w-full border p-2 rounded"
-                    />
-                </div>
-
-                <button
-                    type="submit"
-                    disabled={isLoading}
-                    className="w-full bg-green-600 text-white p-2 rounded hover:bg-green-700 disabled:bg-gray-400"
-                >
-                    {isLoading ? 'Calculando...' : 'Calcular Huella'}
-                </button>
-            </form>
-
-            {/* MUESTRA EL RESULTADO SI EXISTE */}
-            {result && (
-                <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded">
-                    <p className="text-green-800">Resultado: {result.carbonResult} kg de CO2</p>
-                </div>
-            )}
+  return (
+    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 transition-all duration-200 hover:shadow-md hover:border-slate-300">
+      <h2 className="text-2xl font-semibold tracking-tight text-slate-900 mb-6">
+        Calculadora
+      </h2>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div>
+          <label className="block text-xs uppercase tracking-widest text-slate-500 mb-1">
+            Distancia (km)
+          </label>
+          <input
+            type="number"
+            name="distance"
+            value={formData.distance === '' ? '' : formData.distance}
+            onChange={handleChange}
+            className={inputClass}
+            min={0}
+            step={0.01}
+          />
         </div>
-    );
-
-
-
-
-
+        <div>
+          <label className="block text-xs uppercase tracking-widest text-slate-500 mb-1">
+            Vehículo
+          </label>
+          <select
+            name="vehicleType"
+            value={formData.vehicleType}
+            onChange={handleChange}
+            className={inputClass}
+          >
+            <option value="">Selecciona vehículo</option>
+            {VEHICLE_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="block text-xs uppercase tracking-widest text-slate-500 mb-1">
+            Combustible
+          </label>
+          <select
+            name="fuelType"
+            value={formData.fuelType}
+            onChange={handleChange}
+            className={inputClass}
+          >
+            <option value="">Selecciona combustible</option>
+            {FUEL_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="block text-xs uppercase tracking-widest text-slate-500 mb-1">
+            Peso (kg, opcional)
+          </label>
+          <input
+            type="number"
+            name="weight"
+            value={formData.weight === '' ? '' : formData.weight}
+            onChange={handleChange}
+            className={inputClass}
+            min={0}
+            step={0.01}
+          />
+        </div>
+        {error && (
+          <p className="text-sm text-slate-600" role="alert">
+            {error}
+          </p>
+        )}
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="w-full h-12 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold transition-all duration-200 active:scale-[0.98] disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2"
+        >
+          {isLoading ? (
+            <>
+              <svg
+                className="animate-spin h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                />
+              </svg>
+              Calculando...
+            </>
+          ) : (
+            'Calcular emisión'
+          )}
+        </button>
+      </form>
+    </div>
+  );
 }

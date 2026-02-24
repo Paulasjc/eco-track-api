@@ -1,53 +1,54 @@
-'use client'
-import CalculationForm from "@/components/CalculationForm";
-import EstimationHistory from "@/components/EstimationHistory";
-import { EstimationResponse } from "@/types/estimation";
-import { useEffect, useState } from "react";
+'use client';
+
+import CalculationForm from '@/components/CalculationForm';
+import EstimationHistory from '@/components/EstimationHistory';
+import ResultCard from '@/components/ResultCard';
+import KpiCards from '@/components/KpiCards';
+import Navbar from '@/components/Navbar';
+import { EstimationResponse } from '@/types/estimation';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
   const [history, setHistory] = useState<EstimationResponse[]>([]);
+  const [lastResult, setLastResult] = useState<EstimationResponse | null>(null);
 
-  // Creamos la función fuera para que sea reutilizable
   const fetchHistory = async () => {
-    const response = await fetch('http://localhost:8080/api/v1/calculate');
-    const data = await response.json();
-    setHistory(data);
+    try {
+      const response = await fetch('http://localhost:8080/api/v1/calculate');
+      const data = await response.json();
+      setHistory(data);
+    } catch {
+      setHistory([]);
+    }
   };
 
   useEffect(() => {
-    fetchHistory(); // Se ejecuta al cargar
+    fetchHistory();
   }, []);
-  
+
+  const handleCalculateSuccess = (result: EstimationResponse) => {
+    setLastResult(result);
+    fetchHistory();
+  };
+
   return (
-    <main className="min-h-screen bg-gray-100 py-10 px-4">
-      <div className="max-w-6xl mx-auto">
-        
-        {/* CABECERA */}
-        <header className="mb-10 text-center">
-          <h1 className="text-4xl font-extrabold text-slate-800 tracking-tight">
-            Eco<span className="text-emerald-600">Track</span>
-          </h1>
-          <p className="text-slate-600 mt-2 text-lg">Visualiza y reduce tu huella de carbono logística</p>
-        </header>
-  
-        {/* DASHBOARD GRID */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <>
+      <Navbar />
+      <main className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
+        <div className="max-w-6xl mx-auto px-6 py-16">
           
-          {/* COLUMNA IZQUIERDA: Formulario (ocupa 1 de 3 partes) */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-10">
-              <CalculationForm onCalculateSucces={fetchHistory} />
+          <KpiCards history={history} />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <div>
+              <CalculationForm onCalculateSuccess={handleCalculateSuccess} />
+            </div>
+            <div className="space-y-10">
+              <ResultCard result={lastResult} />
+              <EstimationHistory history={history} />
             </div>
           </div>
-  
-          {/* COLUMNA DERECHA: Historial (ocupa 2 de 3 partes) */}
-          <div className="lg:col-span-2">
-            {/* Aquí podrías añadir un pequeño resumen de "Total CO2" antes de la tabla */}
-            <EstimationHistory history={history} />
-          </div>
-  
         </div>
-      </div>
-    </main>
+      </main>
+    </>
   );
 }
