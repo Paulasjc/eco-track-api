@@ -2,10 +2,7 @@ package com.ecotrack.api.model;
 
 import com.ecotrack.api.model.enums.FuelType;
 import com.ecotrack.api.model.enums.VehicleType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -28,5 +25,9 @@ public class Estimation {
     private Double weight;
     private Double carbonResult;
     private LocalDateTime createdAt;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
 }

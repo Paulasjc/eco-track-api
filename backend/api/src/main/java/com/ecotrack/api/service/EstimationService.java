@@ -3,8 +3,10 @@ package com.ecotrack.api.service;
 import com.ecotrack.api.dto.EstimationRequest;
 import com.ecotrack.api.model.EmissionFactor;
 import com.ecotrack.api.model.Estimation;
+import com.ecotrack.api.model.User;
 import com.ecotrack.api.repository.EmissionFactorRepository;
 import com.ecotrack.api.repository.EstimationRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -31,6 +33,11 @@ public class EstimationService {
         // 2. Llamamos al método que contiene la "ciencia"
         Double result = calculateCarbonEmission(request, factorEntity.getFactor());
 
+        // Sacamos al usuario "fichado" en el sistema por el JwtFilter
+        User currentUser = (User) SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+
         // 3. Mapeamos a la entidad
         Estimation estimation = new Estimation();
         estimation.setDistance(request.getDistance());
@@ -39,6 +46,8 @@ public class EstimationService {
         estimation.setCarbonResult(result);
         estimation.setWeight(request.getWeight()); // ¡No olvides el peso!
         estimation.setCreatedAt(LocalDateTime.now()); // Mejor usar LocalDateTime para auditoría completa
+
+        estimation.setUser(currentUser);
 
         return estimationRepository.save(estimation);
     }
@@ -68,6 +77,12 @@ public class EstimationService {
     }
 
     public List<Estimation> getAll() {
-        return estimationRepository.findAll();
+        // --- NOVEDAD: FILTRAR POR USUARIO ---
+        User currentUser = (User) SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        // Usamos el método que creamos en el Repository
+        return estimationRepository.findByUser(currentUser);
     }
 }
