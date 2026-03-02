@@ -47,13 +47,13 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // El origen de tu frontend en desarrollo
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://eco-track-api-roan.vercel.app"));
 
         // Métodos permitidos
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
         // Cabeceras permitidas: Authorization es obligatoria para enviar el Token
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
 
         // Permitir que el navegador envíe cookies o auth headers
         configuration.setAllowCredentials(true);
