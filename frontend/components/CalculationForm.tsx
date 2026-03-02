@@ -2,18 +2,32 @@
 
 import { EstimationRequest, EstimationResponse } from '@/types/estimation';
 import { VEHICLE_LABELS, FUEL_LABELS } from '@/lib/constants';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 const VEHICLE_OPTIONS = Object.entries(VEHICLE_LABELS).map(([value, label]) => ({ value, label }));
 const FUEL_OPTIONS = Object.entries(FUEL_LABELS).map(([value, label]) => ({ value, label }));
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+const VEHICLE_FUEL_MAP: Record<string, string[]> = {
+  CAR_SMALL: ['GASOLINE', 'DIESEL'],
+  CAR_MEDIUM: ['GASOLINE', 'DIESEL'],
+  CAR_LARGE: ['GASOLINE', 'DIESEL'],
+  CAR_ELECTRIC: ['ELECTRIC'],
+  TRUCK_LIGHT: ['DIESEL'],
+  TRUCK_HEAVY: ['DIESEL'],
+  VAN: ['GASOLINE', 'DIESEL'],
+  MOTORBIKE: ['GASOLINE'],
+  BUS: ['DIESEL'],
+  PLANE_SHORT_HAUL: ['JET_FUEL'],
+  PLANE_LONG_HAUL: ['JET_FUEL'],
+};
 
 interface CalculationFormProps {
   onCalculateSuccess: (result: EstimationResponse) => void;
 }
 
 const inputClass =
-  'h-12 w-full rounded-lg border border-slate-300 bg-white px-4 text-base text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition';
+  'h-12 w-full rounded-lg border border-slate-300 bg-white px-4 text-base text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all';
 
 export default function CalculationForm({ onCalculateSuccess }: CalculationFormProps) {
   const [formData, setFormData] = useState<{
@@ -30,17 +44,41 @@ export default function CalculationForm({ onCalculateSuccess }: CalculationFormP
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const filteredFuelOptions = useMemo(() => {
+    if (!formData.vehicleType) return [];
+    const allowed = VEHICLE_FUEL_MAP[formData.vehicleType] ?? [];
+    return FUEL_OPTIONS.filter((opt) => allowed.includes(opt.value));
+  }, [formData.vehicleType]);
+
+  const isFuelDisabled = !formData.vehicleType;
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    // Reset fuel when vehicle changes to evitar combinaciones inválidas
+    if (name === 'vehicleType') {
+      const newVehicleType = value;
+      const allowed = VEHICLE_FUEL_MAP[newVehicleType] ?? [];
+      setFormData((prev) => {
+        const nextFuelType =
+          allowed.length === 1 ? allowed[0] : allowed.includes(prev.fuelType) ? prev.fuelType : '';
+        return {
+          ...prev,
+          vehicleType: newVehicleType,
+          fuelType: nextFuelType,
+        };
+      });
+      return;
+    }
+
+    setFormData((prev) => ({
+      ...prev,
       [name]:
         value === ''
           ? ''
           : name === 'distance' || name === 'weight'
             ? Number(value)
             : value,
-    });
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -125,9 +163,12 @@ export default function CalculationForm({ onCalculateSuccess }: CalculationFormP
             value={formData.fuelType}
             onChange={handleChange}
             className={inputClass}
+            disabled={isFuelDisabled}
           >
-            <option value="">Selecciona combustible</option>
-            {FUEL_OPTIONS.map((opt) => (
+            <option value="">
+              {isFuelDisabled ? 'Selecciona primero un vehículo' : 'Selecciona combustible'}
+            </option>
+            {filteredFuelOptions.map((opt) => (
               <option key={opt.value} value={opt.value}>
                 {opt.label}
               </option>
@@ -156,7 +197,7 @@ export default function CalculationForm({ onCalculateSuccess }: CalculationFormP
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full h-12 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold transition-all duration-200 active:scale-[0.98] disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2"
+          className="w-full h-12 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-500 text-white font-semibold transition-all duration-200 active:scale-[0.98] hover:shadow-md disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2"
         >
           {isLoading ? (
             <>

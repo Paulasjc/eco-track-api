@@ -21,7 +21,7 @@ export default function KpiCards({ history }: KpiCardsProps) {
   }, [history]);
 
   const cardBase =
-    'bg-white rounded-2xl border border-slate-200 shadow-sm p-6 transition-all duration-200 hover:shadow-md hover:border-slate-300';
+    'bg-white rounded-2xl border border-slate-200 shadow-sm p-6 transition-all duration-200 hover:shadow-md hover:border-slate-200/80';
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6 mb-10">

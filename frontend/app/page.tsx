@@ -44,13 +44,12 @@ export default function Home() {
       <Navbar />
       <main className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
         <div className="max-w-6xl mx-auto px-6 py-16">
-          
           <KpiCards history={history} />
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            <div>
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-10 lg:gap-12 items-start">
+            <div className="order-1">
               <CalculationForm onCalculateSuccess={handleCalculateSuccess} />
             </div>
-            <div className="space-y-10">
+            <div className="order-2 space-y-8 lg:space-y-10">
               <ResultCard result={lastResult} />
               <EstimationHistory history={history} />
             </div>
