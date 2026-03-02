@@ -6,13 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="b230d79c-32ab-4a3b-9e72-27fc0053e0aa" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/src/main/java/com/ecotrack/api/controller/EstimationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/src/main/java/com/ecotrack/api/controller/EstimationController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/src/main/java/com/ecotrack/api/security/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/src/main/java/com/ecotrack/api/security/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/src/main/java/com/ecotrack/api/service/EstimationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/src/main/java/com/ecotrack/api/service/EstimationService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/app/login/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/app/login/page.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/components/CalculationForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/components/CalculationForm.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/types/estimation.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/types/estimation.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/components/LoginForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/components/LoginForm.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,8 +22,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Interface" />
-        <option value="Dockerfile" />
         <option value="Class" />
+        <option value="Dockerfile" />
       </list>
     </option>
   </component>

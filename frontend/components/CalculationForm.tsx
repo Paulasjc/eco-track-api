@@ -6,6 +6,7 @@ import { useState } from 'react';
 
 const VEHICLE_OPTIONS = Object.entries(VEHICLE_LABELS).map(([value, label]) => ({ value, label }));
 const FUEL_OPTIONS = Object.entries(FUEL_LABELS).map(([value, label]) => ({ value, label }));
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 interface CalculationFormProps {
   onCalculateSuccess: (result: EstimationResponse) => void;
@@ -51,6 +52,7 @@ export default function CalculationForm({ onCalculateSuccess }: CalculationFormP
     setIsLoading(true);
     setError(null);
     try {
+      if (!API_URL) throw new Error('NEXT_PUBLIC_API_URL no está configurada');
       const basePayload: Omit<EstimationRequest, 'weight'> = {
         distance: Number(formData.distance),
         vehicleType: formData.vehicleType as EstimationRequest['vehicleType'],
@@ -61,7 +63,7 @@ export default function CalculationForm({ onCalculateSuccess }: CalculationFormP
         formData.weight === ''
           ? basePayload
           : { ...basePayload, weight: Number(formData.weight) };
-      const response = await fetch('http://localhost:8080/api/v1/calculate', {
+      const response = await fetch(`${API_URL}/api/v1/calculate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

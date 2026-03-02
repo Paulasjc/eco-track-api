@@ -7,6 +7,8 @@ import { LoginFormValues, loginSchema } from "@/app/schemas/auth.schema";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
 export default function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -24,7 +26,8 @@ export default function LoginForm() {
   async function onSubmit(data: LoginFormValues) {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:8080/api/v1/auth/login", {
+      if (!API_URL) throw new Error("NEXT_PUBLIC_API_URL no está configurada");
+      const response = await fetch(`${API_URL}/api/v1/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
