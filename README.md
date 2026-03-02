@@ -35,7 +35,7 @@ eco-track-api/
 │
 ├─ docker-compose.yml
 └─ README.md
-
+```
 ## ⚙️ Tecnologías y Roles
 Backend (Java/Spring Boot)
 Java 21 & Spring Boot 3: Uso de récords y memoria eficiente.
@@ -91,4 +91,5 @@ Gráficas Avanzadas: Evolución de las métricas con gráficos de tendencias tem
 Exportación: Generación de informes PDF para cumplimiento de normativas ISO.
 
 Desarrollado por Paula San José
+
 
