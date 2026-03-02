@@ -51,12 +51,16 @@ export default function CalculationForm({ onCalculateSuccess }: CalculationFormP
     setIsLoading(true);
     setError(null);
     try {
-      const payload: EstimationRequest = {
+      const basePayload: Omit<EstimationRequest, 'weight'> = {
         distance: Number(formData.distance),
         vehicleType: formData.vehicleType as EstimationRequest['vehicleType'],
         fuelType: formData.fuelType as EstimationRequest['fuelType'],
-        weight: formData.weight === '' ? 0 : Number(formData.weight),
       };
+
+      const payload: EstimationRequest =
+        formData.weight === ''
+          ? basePayload
+          : { ...basePayload, weight: Number(formData.weight) };
       const response = await fetch('http://localhost:8080/api/v1/calculate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

@@ -33,7 +33,7 @@ public class EstimationService {
         // 2. Llamamos al método que contiene la "ciencia"
         Double result = calculateCarbonEmission(request, factorEntity.getFactor());
 
-        // Sacamos al usuario "fichado" en el sistema por el JwtFilter
+        // Sacamos al usuario autenticado (cuando la seguridad esté activa)
         User currentUser = (User) SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getPrincipal();
@@ -44,12 +44,31 @@ public class EstimationService {
         estimation.setVehicleType(request.getVehicleType());
         estimation.setFuelType(request.getFuelType());
         estimation.setCarbonResult(result);
-        estimation.setWeight(request.getWeight()); // ¡No olvides el peso!
-        estimation.setCreatedAt(LocalDateTime.now()); // Mejor usar LocalDateTime para auditoría completa
-
+        estimation.setWeight(request.getWeight());
+        estimation.setCreatedAt(LocalDateTime.now());
         estimation.setUser(currentUser);
 
         return estimationRepository.save(estimation);
+    }
+
+    // Versión para el MVP sin necesidad de usuario autenticado: calcula y NO guarda en BD
+    public Estimation calculateOnly(EstimationRequest request) {
+        EmissionFactor factorEntity = factorRepository
+                .findByVehicleTypeAndFuelType(request.getVehicleType(), request.getFuelType())
+                .orElseThrow(() -> new RuntimeException("Combinación no encontrada"));
+
+        Double result = calculateCarbonEmission(request, factorEntity.getFactor());
+
+        Estimation estimation = new Estimation();
+        estimation.setDistance(request.getDistance());
+        estimation.setVehicleType(request.getVehicleType());
+        estimation.setFuelType(request.getFuelType());
+        estimation.setCarbonResult(result);
+        estimation.setWeight(request.getWeight());
+        estimation.setCreatedAt(LocalDateTime.now());
+
+        // No asignamos usuario ni guardamos en la base de datos
+        return estimation;
     }
 
     // ESTE ES EL CORAZÓN DEL SERVICIO (Separado y Robusto)
@@ -77,12 +96,7 @@ public class EstimationService {
     }
 
     public List<Estimation> getAll() {
-        // --- NOVEDAD: FILTRAR POR USUARIO ---
-        User currentUser = (User) SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getPrincipal();
-
-        // Usamos el método que creamos en el Repository
-        return estimationRepository.findByUser(currentUser);
+        // Para el MVP sin seguridad, devolvemos todo el historial
+        return estimationRepository.findAll();
     }
 }

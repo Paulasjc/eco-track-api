@@ -21,7 +21,8 @@ public class EstimationController {
 
     @PostMapping // Método post
     public Estimation calculate(@Valid  @RequestBody EstimationRequest request){
-        return estimationService.calculateAndSave(request);
+        // Para el MVP sin autenticación, solo calculamos y devolvemos el resultado sin guardar en BD
+        return estimationService.calculateOnly(request);
     }
 
     // Método para poder ver el historial

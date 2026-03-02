@@ -34,9 +34,9 @@ export default function EstimationHistory({ history }: Props) {
               </tr>
             </thead>
             <tbody>
-              {[...history].reverse().map((h) => (
+              {[...history].reverse().map((h, index) => (
                 <tr
-                  key={h.id}
+                  key={h.id ?? index}
                   className="border-t border-slate-100 hover:bg-slate-50 transition-colors"
                 >
                   <td className="px-4 py-3">

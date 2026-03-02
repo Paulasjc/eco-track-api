@@ -12,23 +12,31 @@ export default function Home() {
   const [history, setHistory] = useState<EstimationResponse[]>([]);
   const [lastResult, setLastResult] = useState<EstimationResponse | null>(null);
 
-  const fetchHistory = async () => {
+  // Cargar historial desde localStorage al montar
+  useEffect(() => {
     try {
-      const response = await fetch('http://localhost:8080/api/v1/calculate');
-      const data = await response.json();
-      setHistory(data);
+      const stored = localStorage.getItem('estimationHistory');
+      if (stored) {
+        const parsed = JSON.parse(stored) as EstimationResponse[];
+        setHistory(parsed);
+      }
     } catch {
       setHistory([]);
     }
-  };
-
-  useEffect(() => {
-    fetchHistory();
   }, []);
+
+  // Persistir historial en localStorage cuando cambie
+  useEffect(() => {
+    try {
+      localStorage.setItem('estimationHistory', JSON.stringify(history));
+    } catch {
+      // si localStorage falla, simplemente no persistimos
+    }
+  }, [history]);
 
   const handleCalculateSuccess = (result: EstimationResponse) => {
     setLastResult(result);
-    fetchHistory();
+    setHistory((prev) => [result, ...prev]);
   };
 
   return (
