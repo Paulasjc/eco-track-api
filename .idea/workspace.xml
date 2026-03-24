@@ -5,13 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b230d79c-32ab-4a3b-9e72-27fc0053e0aa" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/data_source_mapping.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/data_source_mapping.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/sqldialects.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/app/login/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/app/login/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/components/CalculationForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/components/CalculationForm.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/components/LoginForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/components/LoginForm.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,7 +62,7 @@
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
     &quot;Spring Boot.ApiApplication.executor&quot;: &quot;Run&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;feature/initial-structure&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/Paula/Documents/Proyectos/eco-track-api&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
@@ -96,7 +93,6 @@
     <attachedChunks>
       <set>
         <option value="bundled-jdk-30f59d01ecdd-2fc7cc6b9a17-intellij.indexing.shared.core-IU-253.30387.90" />
-        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-IU-253.30387.90" />
       </set>
     </attachedChunks>
   </component>
