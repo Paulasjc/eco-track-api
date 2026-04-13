@@ -47,7 +47,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // El origen de tu frontend en desarrollo
-        configuration.setAllowedOriginsPatterns(Arrays.asList("*"));
+        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
 
         // Métodos permitidos
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
