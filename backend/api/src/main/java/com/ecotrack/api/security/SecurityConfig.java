@@ -47,7 +47,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // El origen de tu frontend en desarrollo
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://eco-track-api-roan.vercel.app"));
+        configuration.setAllowedOriginsPatterns(Arrays.asList("*"));
 
         // Métodos permitidos
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
