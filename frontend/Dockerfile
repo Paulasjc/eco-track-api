@@ -1,25 +1,37 @@
-FROM node:20-alpine
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Recibimos la URL del backend en build time y la exponemos para Next.js
-ARG NEXT_PUBLIC_API_URL
-ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
-
-# Instalamos dependencias primero para aprovechar la caché
+# 1. Instalamos dependencias 
 COPY package.json package-lock.json ./
 RUN npm ci
 
-# Copiamos el resto del código de la app
+# 2. Copiamos el resto del código
 COPY . .
 
-# Build de la aplicación Next.js (usa NEXT_PUBLIC_API_URL en tiempo de build)
+# 3. ARGUMENTOS DE CONSTRUCCIÓN
+# Esta URL debe ser la URL pública del backend en la nube 
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+
+# 4. Construimos la aplicación
+
 RUN npm run build
 
-# A partir de aquí, entorno de producción para runtime
+# --- ETAPA DE RUNTIME ---
+FROM node:20-alpine AS runner
+WORKDIR /app
+
 ENV NODE_ENV=production
 
-# Next.js app en el puerto 3000
+# Copiar solo lo necesario para que la imagen sea ligera
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+
+# Al igual que en el back, el puerto debe ser dinámico
+ENV PORT=3000
 EXPOSE 3000
 
-CMD ["npm", "start"]
+CMD ["sh", "-c", "npm start -- -p ${PORT}"]

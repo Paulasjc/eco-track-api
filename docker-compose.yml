@@ -1,7 +1,6 @@
 services:
-  # Definimos el servicio de la base de datos
   db:
-    image: postgres:15
+    image: postgres:15-alpine
     container_name: ecotrack-db
     restart: always
     environment:
@@ -9,35 +8,42 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: ecotrack_db
     ports:
-      - "5432:5432" # Mapea el puerto del contenedor al de tu PC
+      - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data # Para que los datos no se borren al apagar el contenedor
+      - postgres_data:/var/lib/postgresql/data
 
   backend:
     build:
       context: ./backend/api
+      dockerfile: Dockerfile
     container_name: ecotrack-api
     restart: always
     depends_on:
       - db
     environment:
+      # Usamos el nombre del servicio 'db' para la conexión interna
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/ecotrack_db
       SPRING_DATASOURCE_USERNAME: user
       SPRING_DATASOURCE_PASSWORD: password
+      PORT: 8080
     ports:
       - "8080:8080"
 
   frontend:
     build:
       context: ./frontend
+      dockerfile: Dockerfile
       args:
+        # En local, el navegador del usuario sigue usando localhost para hablar con el back
         NEXT_PUBLIC_API_URL: http://localhost:8080
     container_name: ecotrack-frontend
     restart: always
     environment:
-      NEXT_PUBLIC_API_URL: http://localhost:8080
+      PORT: 3000
     ports:
       - "3000:3000"
+    depends_on:
+      - backend
 
 volumes:
   postgres_data:
